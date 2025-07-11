@@ -14,8 +14,71 @@ A comprehensive, well-structured PHP library for URL shortening with analytics t
 
 ## Installation
 
+### Via Composer (Recommended)
+
 ```bash
-composer require urlshortener/php-library
+composer require richardowen/url-shortener
+```
+
+### Alternative Installation Methods
+
+#### From GitHub (Development Version)
+```bash
+git clone https://github.com/RichardOwen2/url-shortener-php.git
+cd url-shortener-php
+composer install
+```
+
+#### Specific Version
+```bash
+composer require richardowen/url-shortener:^1.0
+```
+
+### Requirements
+
+- **PHP**: 8.0 or higher
+- **Composer**: For dependency management
+- **Extensions**: `json`, `pdo` (for database storage)
+
+### Verify Installation
+
+After installation, create a test file to verify everything works:
+
+```php
+<?php
+// test.php
+require_once 'vendor/autoload.php';
+
+use UrlShortener\UrlShortener;
+use UrlShortener\Storage\MemoryStorage;
+use UrlShortener\Generator\RandomCodeGenerator;
+
+echo "🚀 Testing URL Shortener Library...\n";
+
+try {
+    $storage = new MemoryStorage();
+    $generator = new RandomCodeGenerator();
+    $shortener = new UrlShortener($storage, $generator);
+    
+    $testUrl = 'https://packagist.org/packages/richardowen/url-shortener';
+    $shortCode = $shortener->shorten($testUrl);
+    $expandedUrl = $shortener->expand($shortCode);
+    
+    if ($expandedUrl === $testUrl) {
+        echo "✅ Installation successful!\n";
+        echo "Short code: {$shortCode}\n";
+        echo "Original URL: {$expandedUrl}\n";
+    } else {
+        echo "❌ Something went wrong!\n";
+    }
+} catch (Exception $e) {
+    echo "❌ Error: " . $e->getMessage() . "\n";
+}
+```
+
+Run the test:
+```bash
+php test.php
 ```
 
 ## Quick Start
@@ -121,11 +184,68 @@ The library follows SOLID principles and uses dependency injection:
 - **Interface Segregation**: Clean, focused interfaces
 - **Dependency Inversion**: Depends on abstractions, not concretions
 
+## Getting Help
+
+### Documentation
+- 📖 [Complete Installation Guide](INSTALLATION.md)
+- 🏗️ [Architecture Overview](ARCHITECTURE.md)
+- 💡 [Examples Directory](examples/)
+
+### Quick Links
+- 📦 [Packagist Package](https://packagist.org/packages/richardowen/url-shortener)
+- 🐙 [GitHub Repository](https://github.com/RichardOwen2/url-shortener-php)
+- 🐛 [Report Issues](https://github.com/RichardOwen2/url-shortener-php/issues)
+
+### Common Use Cases
+
+#### Marketing Campaign Tracking
+```php
+$metadata = ['campaign' => 'summer2025', 'source' => 'email'];
+$shortCode = $shortener->shorten($campaignUrl, null, $metadata);
+```
+
+#### Temporary Links
+```php
+$expiresAt = new DateTimeImmutable('+7 days');
+$shortCode = $shortener->shorten($temporaryUrl, $expiresAt);
+```
+
+#### Social Media Sharing
+```php
+$socialUrl = 'https://blog.example.com/how-to-build-url-shortener';
+$shortCode = $shortener->shorten($socialUrl);
+echo "Share: https://yourdomain.com/" . $shortCode;
+```
+
+## Development
+
+### Running Tests
+```bash
+composer install
+composer test
+```
+
+### Code Quality
+```bash
+composer analyse    # PHPStan analysis
+composer cs-check   # Code style check
+composer cs-fix     # Fix code style
+```
+
 ## Requirements
 
 - PHP 8.0 or higher
 - PSR-4 autoloader support
+- Extensions: `json`, `pdo` (for database storage)
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Submit a pull request
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
